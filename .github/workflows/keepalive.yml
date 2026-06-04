@@ -1,0 +1,23 @@
+name: Keepalive
+
+# GitHub auto-disables scheduled workflows after 60 days with no repo activity.
+# This pushes an empty commit roughly every 14 days so the timer never reaches 60.
+on:
+  schedule:
+    - cron: '37 5 */14 * *'   # days 1, 15, 29 at 05:37 UTC (off the hour)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Empty keepalive commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive (prevent 60-day workflow disable)"
+          git push
